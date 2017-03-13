@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+		const { Component } = React;
+		const { render } = ReactDOM;
+
+		class LatestActivity extends Component 
+		{
+			state = {
+				attempts: []
+			};
+
+			loadattempts() 
+			{
+				fetch("index-json.php")
+					.then(response => response.json())
+					.then(json => 
+					{
+						console.log(json);
+						this.setState({
+							attempts: json,
+						});
+					});
+			}
+
+			componentDidMount() 
+			{
+				this.loadattempts();
+			}
+
+			render() 
+			{
+				var activities = this.state.attempts.map(function(attempt) 
+				{
+						var date = new Date(attempt.SesDate);
+						var dn = date.getDay();
+						var dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dn];
+						var d = date.getDate();
+						var day =  (d < 10) ? ("0" + d) : d;
+						var m = date.getMonth();
+						var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "sep", "Oct", "Nov", "Dec"][m];
+						
+						return (
+							<tbody key={attempt.Id}>
+								<tr>
+									<td width="16" style={{backgroundColor: attempt.Color}}></td>
+									<td>{attempt.RouteName}</td>
+									<td>{attempt.Type}</td>
+									<td>{attempt.Rating}</td>
+									<td>{attempt.LocName}</td>
+									<td>{attempt.Sublocation}</td>
+									<td>{attempt.FirstName} {attempt.LastName} </td>
+									<td><a href={"usersession.php?IdSession=" + attempt.IdSession + "&IdUser=" + attempt.IdUser}>{dayName} {day}-{month}-{date.getFullYear()}</a></td>
+									<td width="16"><img src={attempt.Completed == 0 ? "result-fail.png" : attempt.WithoutFault == 0 ? "result-faults.png" : "result-success.png"}/></td>
+								</tr>
+							</tbody>
+						);
+					});
+					
+				return (
+					<div>
+						<center>
+						<h1>Latest activity</h1>
+						<table>
+						{activities}
+						</table>
+						</center>
+					</div>
+				);
+			}
+		}
+
+		ReactDOM.render(<LatestActivity />, document.getElementById('root'));
+
+    </script>
+  </body>
+</html>
