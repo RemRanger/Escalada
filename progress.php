@@ -19,7 +19,7 @@ $History = $_GET["History"];
 
 include_once 'dbconnect.php';
 
-echo '<h1>Progress: toprope</h1>';
+echo '<h1>Progress</h1>';
 
 echo '<input type="checkbox" id="History"';
 if (isset($History)) 
@@ -52,8 +52,8 @@ if ($result->num_rows > 0)
 	$percentageCount = [];
 	$statsIndex = 0;
 	$routeCount = 0;
-  while ($row = $result->fetch_assoc()) 
-  {
+	while ($row = $result->fetch_assoc()) 
+	{
 		$idRoute = $row["IdRoute"];
 		if (!array_key_exists($idRoute, $hasRoute))
 		{

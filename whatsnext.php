@@ -17,9 +17,20 @@ session_start();
 $IdUser = $_SESSION["IdUser"];
 
 include_once 'dbconnect.php';
+?>
 
-echo '<h1>What\'s next: toprope</h1>';
+<h1>What's next</h1>
+Type:
+<select id="RouteType" onChange="refresh()">
+	<option <?php if ($Type == 'Toprope') echo ' selected' ?>>Toprope</option>
+	<option <?php if ($Type == 'Lead') echo ' selected' ?>>Lead</option>
+	<option <?php if ($Type == 'Boulder') echo ' selected' ?>>Boulder</option>
+</select>
+<input type="checkbox" id="History"' <?php if ($History == "True")	echo ' checked="True"'?> onChange="refresh()">History</input>
+<br>
+<br>
 
+<?php
 $sql = "
 select * from
 (
