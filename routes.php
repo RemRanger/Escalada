@@ -19,8 +19,6 @@ $IdUser = $_SESSION["IdUser"];
 if (!isset($IdUser))
 	$IdUser = 0;
 $Type = $_GET["Type"];
-if (!isset($Type))
-	$Type = "Toprope";
 $Sort = $_GET["Sort"];
 $PrevSort = $_GET["PrevSort"];
 $SortDirection = $_GET["SortDirection"];
@@ -46,14 +44,13 @@ include_once 'dbconnect.php';
 
 echo '<h1>Routes</h1>';
 
-$sql = "
-select Loc.Name 
-from Location Loc
-where Loc.Id = $IdLocation
-";
+$sql = "select Name, DefaultRouteType from Location Loc where Loc.Id = $IdLocation";
 $result = $conn->query($sql);
 if ($row = $result->fetch_assoc()) 
 {
+	if (!isset($Type))
+		$Type = $row["DefaultRouteType"];
+	
 	echo $row["Name"];
 	echo '<br><br>';
 }
@@ -63,13 +60,16 @@ if ($CanEditRoutes)
 	echo '<br><br>';
 }
 
-echo '<select onChange="selectType(this.value)">';
-echo '  <option value="TopRope"' . ($Type == "Toprope" ? ' selected' : '') . '>Toprope</option>';
-echo '  <option value="Lead"' . ($Type == "Lead" ? ' selected' : '') . '>Lead</option>';
-echo '  <option value="Boulder"' . ($Type == "Boulder" ? ' selected' : '') . '>Boulder</option>';
+$sql = "select RouteType from LocationRouteType where IdLocation = $IdLocation";
+$result = $conn->query($sql);
+echo '<select onChange="selectType(this.value)"';
+if ($result->num_rows < 2)
+	echo ' disabled';
+echo '>';
+while ($row = $result->fetch_assoc()) 
+	echo '  <option value="' . $row["RouteType"] . '"' . ($Type == $row["RouteType"] ? ' selected' : '') . '>' . $row["RouteType"] . '</option>';
 echo '</select>';
 echo '<br><br>';
-
 
 $sql = "
 select Rou.Id, Rou.Color, Rou.Name, Rou.Type, Rou.Rating, Rou.Sublocation, Rou.Removed, 
@@ -138,7 +138,7 @@ if ($result->num_rows > 0)
 				echo '<td style="color: red">' . $row[Percentage] . '%</td>';
 			else
 				echo '<td align="center"><img src="' . $resultPic . '"></td>';
-			echo '<td><button style="width:40px" onclick="window.location=\'editroute.php?&IdRoute=' . $row[Id] . '\'">Edit</button></td>';
+			echo '<td><button style="width:40px" onclick="window.location=\'editroute.php?IdRoute=' . $row[Id] . '\'">Edit</button></td>';
 		}
 		echo '</tr>';
 	}
@@ -149,9 +149,9 @@ else
     echo "No results";
 }
 
-echo "<br>";
-if ($CanEditRoutes)
-	echo '<button style="width:100px" name="btn-addroute" onclick="window.location=\'addroute.php?IdLocation=' . $IdLocation . '\'">Add route</button>';
+//echo "<br>";
+//if ($CanEditRoutes)
+//	echo '<button style="width:100px" name="btn-addroute" onclick="window.location=\'addroute.php?IdLocation=' . $IdLocation . '\'">Add route</button>';
 
 $conn->close();
 

@@ -65,7 +65,7 @@ else
 <table class="noborder" border="0">
 	<td class="noborder" >Location</td>
 	<td class="noborder" >
-		<select name="IdLocation" required>
+		<select name="IdLocation" required onChange="RefreshLocation(this.value)">
 			<?php
 			if (!isset($IdLocation) || empty($IdLocation))
 				echo '<option disabled selected>--Please select a location--</option>';
@@ -86,12 +86,7 @@ else
 	<tr>
 		<td class="noborder">Type</td>
 		<td class="noborder">
-		<select name="Type" required>
-			<option disabled selected>--Please select a type--</option>
-			<option <?php if ($Type == 'Toprope') echo ' selected' ?>>Toprope</option>
-			<option <?php if ($Type == 'Lead') echo ' selected' ?>>Lead</option>
-			<option <?php if ($Type == 'Boulder') echo ' selected' ?>>Boulder</option>
-		</select>
+		<div id="RouteTypeContainer"></div>
 	</td></tr>
 	<tr><td class="noborder">Name</td><td class="noborder"><input type="text" name="Name" required placeholder="Name" value="<?php echo $Name ?>" /></td></tr>
 	<tr><td class="noborder">Where</td><td class="noborder"><input type="text" name="Sublocation" required placeholder="Where is it?" value="<?php echo $Sublocation ?>" /></td></tr>
@@ -100,9 +95,6 @@ else
 	<tr>
 		<td class="noborder">Color</td>
 		<td class="noborder">
-			<!--select name="Color" required>
-				<!--?php include_once 'colorpicker.php'; ?-->
-			<!--/select-->
 			<?php include_once 'colorSelector.php'; ?>
 		</td>
 	</tr>
@@ -114,6 +106,30 @@ else
 </form>
 </div>
 </center>
+
+<script>
+RefreshLocation(<?php echo $IdLocation ?>);
+
+function RefreshLocation(idLocation)
+{
+	var container = document.getElementById("RouteTypeContainer"); 
+
+	if (window.XMLHttpRequest)
+		xmlhttpRouteTypes = new XMLHttpRequest();
+	else 
+		xmlhttpRouteTypes = new ActiveXObject("Microsoft.XMLHTTP");
+	xmlhttpRouteTypes.onreadystatechange = function() 
+	{
+		if (xmlhttpRouteTypes.readyState == 4 && xmlhttpRouteTypes.status == 200) 
+		{
+			container.innerHTML = xmlhttpRouteTypes.responseText;
+			cell.style = "";
+		}
+	};
+	xmlhttpRouteTypes.open("GET", "getRouteTypes.php?IdLocation=" + idLocation + "&Type=<?php echo $Type ?>", true);
+	xmlhttpRouteTypes.send();
+}
+</script>
 
 </body>
 </html>

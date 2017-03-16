@@ -59,7 +59,7 @@ if(isset($_POST['btn-addroute']))
 <table class="noborder align="center" width="30%" border="0">
 	<tr><td class="noborder"><label><h1>Add route</h1></label></td></tr>
 	<td class="noborder">
-		<select name="IdLocation"" required>
+		<select name="IdLocation"" required onChange="RefreshLocation(this.value)">
 			<?php
 			if (!isset($IdLocation) || empty($IdLocation))
 				echo '<option disabled selected>--Please select a location--</option>';
@@ -78,12 +78,7 @@ if(isset($_POST['btn-addroute']))
 		</select>
 	</td>
 	<tr><td class="noborder">
-		<select name="Type" required>
-			<option disabled selected>--Please select a type--</option>
-			<option>Toprope</option>
-			<option>Lead</option>
-			<option>Boulder</option>
-		</select>
+		<div id="RouteTypeContainer"></div>
 	</td></tr>
 	<tr><td class="noborder"><input type="text" name="Name" required placeholder="Name"/></td></tr>
 	<tr><td class="noborder"><input type="text" name="Sublocation" required placeholder="Where is it?"/></td></tr>
@@ -103,48 +98,26 @@ if(isset($_POST['btn-addroute']))
 </center>
 
 <script>
-function RefreshSession(idSession)
-{
-	RefreshPartners(idSession);
-	RefreshRoutes(idSession);
-}
+RefreshLocation(<?php echo $IdLocation ?>);
 
-function RefreshPartners(idSession) 
+function RefreshLocation(idLocation)
 {
-	var withwhom = document.getElementById("WithWhom"); 
+	var container = document.getElementById("RouteTypeContainer"); 
 
 	if (window.XMLHttpRequest)
-		xmlhttpPartners = new XMLHttpRequest();
+		xmlhttpRouteTypes = new XMLHttpRequest();
 	else 
-		xmlhttpPartners = new ActiveXObject("Microsoft.XMLHTTP");
-	xmlhttpPartners.onreadystatechange = function() 
+		xmlhttpRouteTypes = new ActiveXObject("Microsoft.XMLHTTP");
+	xmlhttpRouteTypes.onreadystatechange = function() 
 	{
-		//if (xmlhttpPartners.readystate == 4 && xmlhttpPartners.status == 200) 
-			withwhom.textContent = xmlhttpPartners.responseText;
-	};
-	xmlhttpPartners.open("GET", "getpartners.php?idSession=" + idSession, true);
-	xmlhttpPartners.send();
-}
-
-function RefreshRoutes(idSession)
-{
-	var select = document.getElementById("Route"); 
-	var cell = document.getElementById("RouteCell"); 
-
-	if (window.XMLHttpRequest)
-		xmlhttpRoutes = new XMLHttpRequest();
-	else 
-		xmlhttpRoutes = new ActiveXObject("Microsoft.XMLHTTP");
-	xmlhttpRoutes.onreadystatechange = function() 
-	{
-		if (xmlhttpRoutes.readyState == 4 && xmlhttpRoutes.status == 200) 
+		if (xmlhttpRouteTypes.readyState == 4 && xmlhttpRouteTypes.status == 200) 
 		{
-			select.innerHTML = xmlhttpRoutes.responseText;
+			container.innerHTML = xmlhttpRouteTypes.responseText;
 			cell.style = "";
 		}
 	};
-	xmlhttpRoutes.open("GET", "getroutes.php?idSession=" + idSession, true);
-	xmlhttpRoutes.send();
+	xmlhttpRouteTypes.open("GET", "getRouteTypes.php?IdLocation=" + idLocation, true);
+	xmlhttpRouteTypes.send();
 }
 </script>
 
