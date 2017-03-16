@@ -22,6 +22,7 @@ $Type = $_GET["Type"];
 $Sort = $_GET["Sort"];
 $PrevSort = $_GET["PrevSort"];
 $SortDirection = $_GET["SortDirection"];
+$History = $_GET["History"];
 
 $sql = "select EditRoutes from LocationUser where IdLocation = $IdLocation and IdUser = $IdUser";
 $result = $conn->query($sql);
@@ -62,13 +63,17 @@ if ($CanEditRoutes)
 
 $sql = "select RouteType from LocationRouteType where IdLocation = $IdLocation";
 $result = $conn->query($sql);
-echo '<select onChange="selectType(this.value)"';
+echo '<select id="Type" onChange="refresh()"';
 if ($result->num_rows < 2)
 	echo ' disabled';
 echo '>';
 while ($row = $result->fetch_assoc()) 
 	echo '  <option value="' . $row["RouteType"] . '"' . ($Type == $row["RouteType"] ? ' selected' : '') . '>' . $row["RouteType"] . '</option>';
 echo '</select>';
+echo '<input type="checkbox" id="History"';
+if ($History == "True")
+	echo ' checked="True"';
+echo ' onChange="refresh()">History</input>';
 echo '<br><br>';
 
 $sql = "
@@ -78,6 +83,9 @@ select Rou.Id, Rou.Color, Rou.Name, Rou.Type, Rou.Rating, Rou.Sublocation, Rou.R
 from Route Rou 
 where Rou.IdLocation = $IdLocation and Rou.Type = '$Type'
 ";
+if ($History != "True")
+	$sql .= "and Rou.Removed = 0";
+
 
 if (isset($Sort))
 {
@@ -158,9 +166,15 @@ $conn->close();
 ?>
 
 <script>
-function selectType(type)
+function refresh()
 {
-	window.location= 'routes.php?IdLocation=<?php echo $IdLocation ?>&Type=' + type;
+	var routeTypeCombo = document.getElementById("Type");
+	var checkbox = document.getElementById("History");
+
+	var type = routeTypeCombo.value;
+	var history = checkbox.checked ? "True" : "False";
+	
+	window.location= 'routes.php?IdLocation=<?php echo $IdLocation ?>&Type=' + type + '&History=' + history;
 }
 </script>
 
