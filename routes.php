@@ -16,12 +16,21 @@ session_start();
 <?php
 $IdLocation = $_GET["IdLocation"];
 $IdUser = $_SESSION["IdUser"];
+if (!isset($IdUser))
+	$IdUser = 0;
 $Type = $_GET["Type"];
 if (!isset($Type))
 	$Type = "Toprope";
 $Sort = $_GET["Sort"];
 $PrevSort = $_GET["PrevSort"];
 $SortDirection = $_GET["SortDirection"];
+
+$sql = "select EditRoutes from LocationUser where IdLocation = $IdLocation and IdUser = $IdUser";
+$result = $conn->query($sql);
+if ($row = $result->fetch_assoc()) 
+	$CanEditRoutes = $row["EditRoutes"];
+else
+	$CanEditRoutes = 0;
 
 if (isset($Sort) && isset($PrevSort) && isset($SortDirection))
 {	
@@ -36,6 +45,7 @@ $thisUrl = "routes.php?IdLocation=" . $IdLocation;
 include_once 'dbconnect.php';
 
 echo '<h1>Routes</h1>';
+
 $sql = "
 select Loc.Name 
 from Location Loc
@@ -47,7 +57,7 @@ if ($row = $result->fetch_assoc())
 	echo $row["Name"];
 	echo '<br><br>';
 }
-if (!empty($IdUser))
+if ($CanEditRoutes)
 {
 	echo '<button style="width:100px" name="btn-addroute" onclick="window.location=\'addroute.php?IdLocation=' . $IdLocation . '\'">Add route</button>';
 	echo '<br><br>';
@@ -94,7 +104,7 @@ if ($result->num_rows > 0)
 	echo '<th colspan="2"><a href="' . $thisUrl . '&Sort=Name&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '">Route</a></th>';
 	echo '<th><a href="' . $thisUrl . '&Sort=Rating&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '">Rating</a></th>';
 	echo '<th align="left"><a href="' . $thisUrl . '&Sort=Sublocation&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '">Location</a></th>';
-	if (!empty($_SESSION["IdUser"]))
+	if ($CanEditRoutes)
 	{
 			echo '<th><a href="' . $thisUrl . '&Sort=Result&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '"><img src="result-finish.png"></a></th><th></th>';
 	}
@@ -111,13 +121,18 @@ if ($result->num_rows > 0)
 			$resultPic = "result-success.png";
 
 		echo '  <tr><td width="16" bgcolor="' . $row[Color] . ' "></td>';
-		echo '<td><a href="userroutestats.php?IdUser=' . $IdUser . '&IdRoute=' . $row["Id"] . '">';
+		echo '<td>';
+		if ($CanEditRoutes)
+			echo '<a href="userroutestats.php?IdUser=' . $IdUser . '&IdRoute=' . $row["Id"] . '">';
 		if ($row["Removed"] == 1)
 			echo '<del>';
-		echo $row["Name"] . '</a></td>';
+		echo $row["Name"];
+		if ($CanEditRoutes)
+			echo '</a>';
+		echo '</td>';
 		echo '<td>' . $row["Rating"] . '</td><td>' . $row["Sublocation"] . '</td>';
 		echo '</td>';
-		if (!empty($IdUser))
+		if ($CanEditRoutes)
 		{
 			if ($row["Result"] == 0 && $row["Percentage"] !== NULL)
 				echo '<td style="color: red">' . $row[Percentage] . '%</td>';
@@ -135,7 +150,7 @@ else
 }
 
 echo "<br>";
-if (!empty($IdUser))
+if ($CanEditRoutes)
 	echo '<button style="width:100px" name="btn-addroute" onclick="window.location=\'addroute.php?IdLocation=' . $IdLocation . '\'">Add route</button>';
 
 $conn->close();

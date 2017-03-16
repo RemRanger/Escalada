@@ -31,10 +31,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) 
 {
 	echo '<table>';
-	echo '  <tr><th';
-	if (!empty($_SESSION["IdUser"]))
-		echo ' colspan="2"';
-	echo '>Location</th><th>Website</th>';
+	echo '  <tr><th colspan="2">Location</th><th>Website</th>';
 
 	$Ids = [];
 	$Latitude = [];
@@ -54,8 +51,7 @@ if ($result->num_rows > 0)
 		$Url[$Id] = $row["WebsiteUrl"];
 		echo '  <tr>';
 		echo '    <td>' . $row["Name"] . '</td>';
-		if (!empty($_SESSION["IdUser"]))
-			echo '<td><a href="routes.php?IdLocation=' . $row["Id"] . '">Routes</a></td>';
+		echo '<td><a href="routes.php?IdLocation=' . $row["Id"] . '">Routes</a></td>';
 		if (!empty($Url[$Id]))
 		{
 			if ($ret = parse_url($Url[$Id]) )

@@ -15,6 +15,9 @@ session_start();
 
 <?php
 $IdUser = $_SESSION["IdUser"];
+$Type = $_GET["Type"];
+if (!isset($Type))
+	$Type = "Toprope";
 
 include_once 'dbconnect.php';
 ?>
@@ -26,7 +29,6 @@ Type:
 	<option <?php if ($Type == 'Lead') echo ' selected' ?>>Lead</option>
 	<option <?php if ($Type == 'Boulder') echo ' selected' ?>>Boulder</option>
 </select>
-<input type="checkbox" id="History"' <?php if ($History == "True")	echo ' checked="True"'?> onChange="refresh()">History</input>
 <br>
 <br>
 
@@ -38,7 +40,7 @@ select * from
   from Route Rou
   left outer join Attempt Att on Att.IdRoute = Rou.Id
 	inner join Location Loc on Loc.Id = Rou.IdLocation
-  where Rou.Type = 'Toprope' and Rou.Removed = 0 and (Att.IdUser = $IdUser or Att.IdUser is null)
+  where Rou.Type = '$Type' and Rou.Removed = 0 and (Att.IdUser = $IdUser or Att.IdUser is null)
   group by Rou.Id, Rou.Color, Rou.Name, Rou.Rating, Loc.Name
 ) Atm
 where Result < 2 or Result is null
@@ -99,5 +101,13 @@ else
 $conn->close();
 
 ?>
+<script>
+function refresh()
+{
+	var routeTypeCombo = document.getElementById("RouteType");
+	var routeType = routeTypeCombo.value;
+	window.location = 'whatsnext.php?Type=' + routeType;
+}
+</script>
 </body>
 </html> 

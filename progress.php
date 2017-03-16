@@ -16,24 +16,33 @@ session_start();
 <?php
 $IdUser = $_SESSION["IdUser"];
 $History = $_GET["History"];
+$Type = $_GET["Type"];
+if (!isset($Type))
+	$Type = "Toprope";
 
 include_once 'dbconnect.php';
+?>
 
-echo '<h1>Progress</h1>';
+<h1>Progress</h1>
+Type:
+<select id="RouteType" onChange="refresh()">
+	<option <?php if ($Type == 'Toprope') echo ' selected' ?>>Toprope</option>
+	<option <?php if ($Type == 'Lead') echo ' selected' ?>>Lead</option>
+	<option <?php if ($Type == 'Boulder') echo ' selected' ?>>Boulder</option>
+</select>
+<input type="checkbox" id="History"' <?php if ($History == "True")	echo ' checked="True"'?> onChange="refresh()">History</input>
+<br>
+<br>
 
-echo '<input type="checkbox" id="History"';
-if (isset($History)) 
-	echo ' checked="True"';
-echo ' onChange="setHistory(this)">History</input>';
-
+<?php
 $sql = "
 select Rou.Id IdRoute, Rou.Removed, Rou.Rating, Rou.Color, Rou.Name, Loc.Name Location, Rou.Sublocation, Ses.Id IdSession, UNIX_TIMESTAMP(Ses.Date) SesDate, Max(Att.Result) Result, Max(Att.Percentage) Percentage
 from Route Rou
 join Location Loc on Loc.Id = Rou.IdLocation
 left outer join Attempt Att on Att.IdRoute = Rou.Id
 left outer join Session Ses on Ses.Id = Att.IdSession
-where (Att.IdUser = $IdUser or Att.IdUser is null) and Rou.Type = 'Toprope'";
-if (!isset($History))
+where (Att.IdUser = $IdUser or Att.IdUser is null) and Rou.Type = '$Type'";
+if ($History != "True")
 	$sql .= "and Rou.Removed = 0";
 $sql .= "
 group by Rou.Id, Rou.Removed, Rou.Rating, Rou.Color, Rou.Name, Loc.name, Rou.Sublocation, Ses.Id, Ses.Date
@@ -52,8 +61,8 @@ if ($result->num_rows > 0)
 	$percentageCount = [];
 	$statsIndex = 0;
 	$routeCount = 0;
-	while ($row = $result->fetch_assoc()) 
-	{
+  while ($row = $result->fetch_assoc()) 
+  {
 		$idRoute = $row["IdRoute"];
 		if (!array_key_exists($idRoute, $hasRoute))
 		{
@@ -205,12 +214,15 @@ $script .= '\'blue\', \'green\'],
 
 ?>
 <script>
-function setHistory(checkbox)
+function refresh()
 {
-	if (checkbox.checked)
-		window.location = 'progress.php?History=True';
-	else
-		window.location= 'progress.php';
+	var routeTypeCombo = document.getElementById("RouteType");
+	var checkbox = document.getElementById("History");
+
+	var routeType = routeTypeCombo.value;
+	var history = checkbox.checked ? "True" : "False";
+	
+	window.location = 'progress.php?Type=' + routeType + '&History=' + history;
 }
 </script>
 </body>
