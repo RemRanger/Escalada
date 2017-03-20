@@ -78,7 +78,8 @@ ul.subnav
 	display: none;
 }
 
-li a, .dropbtn {
+li a, .dropbtn 
+{
     display: inline-block;
     color: white;
 	background-color: black;

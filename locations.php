@@ -25,7 +25,8 @@ include_once 'dbconnect.php';
 
 <?php
 
-$sql = "SELECT Id, Name, WebsiteUrl, Latitude, Longitude FROM Location";
+$sql = "SELECT Id, Name, WebsiteUrl, Latitude, Longitude, (SELECT COUNT(*) FROM LocationRouteType WHERE IdLocation = Location.Id AND RouteType != 'Boulder') RopeTypes 
+		FROM Location";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) 
@@ -36,6 +37,7 @@ if ($result->num_rows > 0)
 	$Ids = [];
 	$Latitude = [];
 	$Longitude = [];
+	$RopeTypes = [];
 	$Name = [];
 	$Url = [];
 
@@ -49,6 +51,7 @@ if ($result->num_rows > 0)
 		$Longitude[$Id] = $row["Longitude"];
 		$Name[$Id] = $row["Name"];
 		$Url[$Id] = $row["WebsiteUrl"];
+		$RopeTypes[$Id] = $row["RopeTypes"];
 		echo '  <tr>';
 		echo '    <td>' . $row["Name"] . '</td>';
 		echo '<td><a href="routes.php?IdLocation=' . $row["Id"] . '">Routes</a></td>';
@@ -93,7 +96,9 @@ if ($result->num_rows > 0)
 	foreach ($Ids as $Id)
 	{
 		echo '		var location_' . $Id . ' = {lat: ' . $Latitude[$Id] . ', lng: ' . $Longitude[$Id] . '};';
-		echo '		var marker_' . $Id . ' = new google.maps.Marker({position: location_' . $Id . ', map: map, title: "' . $Name[$Id] . '", url: "' . $Url[$Id] . '"});';
+      	//echo '      var icon = {path: google.maps.SymbolPath.CIRCLE, strokeColor: "' . ($RopeTypes[$Id] > 0 ? 'red' : 'blue') . '", scale: 5};';
+       	echo '      var icon = "https://maps.google.com/mapfiles/kml/paddle/' . ($RopeTypes[$Id] > 0 ? 'red' : 'blu') . '-stars-lv.png";';
+		echo '		var marker_' . $Id . ' = new google.maps.Marker({position: location_' . $Id . ', map: map, icon: ' . icon . ', title: "' . $Name[$Id] . '", url: "' . $Url[$Id] . '"});';
 		echo '    google.maps.event.addListener(marker_' . $Id . ', "click", function() {window.location.href = this.url;});';	 
 		echo '    map.fitBounds(new google.maps.LatLngBounds(new google.maps.LatLng(' . $minLat . ', ' . $minLong . '), new google.maps.LatLng('. $maxLat . ', ' . $maxLong . ')));';	 
 	}
