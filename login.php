@@ -12,7 +12,7 @@ if(isset($_POST['btn-login']))
  $username = mysqli_real_escape_string($conn, $_POST['username']);
  $upass = mysqli_real_escape_string($conn, $_POST['pass']);
  
- $res=$conn->query("SELECT * FROM User WHERE UserName='$username'");
+ $res=$conn->query("SELECT Id, Password FROM User WHERE UserName='$username'");
  $row=$res->fetch_assoc();
  if($row['Password'] == md5($upass))
  {
@@ -22,7 +22,7 @@ if(isset($_POST['btn-login']))
  else
  {
 	?>
-        <script>alert('wrong details');</script>
+        <script>alert('Wrong user name/password.');</script>
         <?php
  }
  

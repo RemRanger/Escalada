@@ -29,7 +29,7 @@ if(isset($_POST['btn-editroute']))
 }
 
 $sql = "
-select IdLocation, Type, Color, Name, Sublocation, Rating, Removed
+select IdLocation, Type, Color, Name, Sublocation, Rating, Removed, !IsNull(Picture) HasPicture
 from Route
 where Id = $IdRoute
 ";
@@ -43,6 +43,7 @@ if ($row = $result->fetch_assoc())
 	$Sublocation = $row["Sublocation"];
 	$Rating = $row["Rating"];
 	$Removed = $row["Removed"];
+	$HasPicture = $row["HasPicture"];
 }
 else
 	die(mysqli_error($conn))
@@ -63,40 +64,55 @@ else
 <div id="login-form">
 <form id="sessionform" method="post">
 <table class="noborder" border="0">
-	<td class="noborder" >Location</td>
-	<td class="noborder" >
-		<select name="IdLocation" required onChange="RefreshLocation(this.value)">
-			<?php
-			if (!isset($IdLocation) || empty($IdLocation))
-				echo '<option disabled selected>--Please select a location--</option>';
-			$sql = "select Id, Name from Location";
-			$result = $conn->query($sql);
-			while ($row = $result->fetch_assoc()) 
-			{
-				echo '<option value="' . $row["Id"]. '"';
-				if ($IdLocation == $row["Id"])
-					echo ' selected';
-				echo '>';
-				echo $row["Name"];
-				echo '</option>';
-			}
-			?>
-		</select>
+<tr>
+	<td>
+		<table class="noborder" border="0">
+			<td class="noborder" >Location</td>
+			<td class="noborder" >
+				<select name="IdLocation" required onChange="RefreshLocation(this.value)">
+					<?php
+					if (!isset($IdLocation) || empty($IdLocation))
+						echo '<option disabled selected>--Please select a location--</option>';
+					$sql = "select Id, Name from Location";
+					$result = $conn->query($sql);
+					while ($row = $result->fetch_assoc()) 
+					{
+						echo '<option value="' . $row["Id"]. '"';
+						if ($IdLocation == $row["Id"])
+							echo ' selected';
+						echo '>';
+						echo $row["Name"];
+						echo '</option>';
+					}
+					?>
+				</select>
+			</td>
+			<tr>
+				<td class="noborder">Type</td>
+				<td class="noborder">
+				<div id="RouteTypeContainer"></div>
+			</td></tr>
+			<tr><td class="noborder">Name</td><td class="noborder"><input type="text" name="Name" required placeholder="Name" value="<?php echo $Name ?>" /></td></tr>
+			<tr><td class="noborder">Where</td><td class="noborder"><input type="text" name="Sublocation" required placeholder="Where is it?" value="<?php echo $Sublocation ?>" /></td></tr>
+			<tr><td class="noborder">Rating</td><td class="noborder"><input type="text" name="Rating" required placeholder="Rating" value="<?php echo $Rating ?>" /></td></tr>
+			<tr><td class="noborder">Removed</td><td class="noborder"><input type="hidden" name="Removed" value="0" /><input type="checkbox" name="Removed" placeholder="Removed" value="1" <?php if ($Removed == 1) echo 'checked' ?> /></td></tr>
+			<tr>
+				<td class="noborder">Color</td>
+				<td class="noborder">
+					<?php include_once 'colorSelector.php'; ?>
+				</td>
+			</tr>
+		</table>
 	</td>
-	<tr>
-		<td class="noborder">Type</td>
-		<td class="noborder">
-		<div id="RouteTypeContainer"></div>
-	</td></tr>
-	<tr><td class="noborder">Name</td><td class="noborder"><input type="text" name="Name" required placeholder="Name" value="<?php echo $Name ?>" /></td></tr>
-	<tr><td class="noborder">Where</td><td class="noborder"><input type="text" name="Sublocation" required placeholder="Where is it?" value="<?php echo $Sublocation ?>" /></td></tr>
-	<tr><td class="noborder">Rating</td><td class="noborder"><input type="text" name="Rating" required placeholder="Rating" value="<?php echo $Rating ?>" /></td></tr>
-	<tr><td class="noborder">Removed</td><td class="noborder"><input type="hidden" name="Removed" value="0" /><input type="checkbox" name="Removed" placeholder="Removed" value="1" <?php if ($Removed == 1) echo 'checked' ?> /></td></tr>
-	<tr>
-		<td class="noborder">Color</td>
-		<td class="noborder">
-			<?php include_once 'colorSelector.php'; ?>
-		</td>
+<?php if ($HasPicture == 1)
+{
+?>
+	<td>
+		<img src="getRouteImage.php?Id=<?php echo $IdRoute ?>" />
+	</td>
+<?php
+}
+?>
 	</tr>
 </table>
 <br>

@@ -115,7 +115,7 @@ if ($result->num_rows > 0)
 		echo '</td>';
 		echo '<td>' . $row["Comment"] . '</td>';
 		if ($_SESSION["IdUser"] == $IdUser)
-			echo '<td><button style="width:40px" onclick="window.location=\'editattempt.php?&IdAttempt=' . $row[IdAttempt] . '\'">Edit</button></td>';
+			echo '<td><button style="width:40px" onclick="window.location=\'editattempt.php?&IdAttempt=' . $row[IdAttempt] . '\'"><img src="edit.png"></button></td>';
 		echo '</tr>';
   }
   echo "</table>";

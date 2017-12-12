@@ -74,7 +74,7 @@ if ($result->num_rows > 0)
 			echo '    </td>';
 			echo '    <td>' . $row["Comment"] . '</td>';
 			if (!empty($_SESSION["IdUser"]))
-				echo '<td><button style="width:40px" onclick="window.location=\'editsession.php?IdSession=' . $IdSes . '\'">Edit</button></td>';
+				echo '<td><button style="width:40px" onclick="window.location=\'editsession.php?IdSession=' . $IdSes . '\'"><img src="edit.png"></button></td>';
 			echo '  </tr>';
     }
     echo "</table>";

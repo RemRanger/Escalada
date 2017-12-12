@@ -33,7 +33,7 @@ if ($row = $result->fetch_assoc())
 		echo '<del>';
 	echo $row["Name"];
 	if (!empty($_SESSION["IdUser"]))
-		echo '&nbsp;&nbsp;<button style="width:40px" onclick="window.location=\'editroute.php?&IdRoute=' . $IdRoute . '\'">Edit</button>';
+		echo '&nbsp;&nbsp;<button style="width:40px" onclick="window.location=\'editroute.php?&IdRoute=' . $IdRoute . '\'"><img src="edit.png"></button>';
 	echo '</td>';
 	echo '<td>' . $row["Rating"] . '</td>';
 	echo '<td>' . $row["Sublocation"] . '</td>';
@@ -84,6 +84,17 @@ else
 
 echo '<br>';
 echo '<button style="width:100px" name="btn-back" onclick="window.history.back();">Back</button>';
+echo '<br><br>';
+
+$sql = "
+select Picture from Route where Id = $IdRoute
+";
+$result = $conn->query($sql);
+if ($row = $result->fetch_assoc()) 
+{	
+	if ($row["Picture"] != null)
+	echo '<img src="getRouteImage.php?Id=' . $IdRoute . '"/>';
+}
 
 $conn->close();
 

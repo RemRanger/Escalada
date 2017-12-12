@@ -1,10 +1,10 @@
 body 
 {
-  background-color: white;
+  	font: 15px arial, sans-serif;
 	background-image: url("background.jpg");
-	background-repeat: no-repeat;
-	background-size: cover;
-  font: 15px arial, sans-serif;
+	background-size: 100%;
+	background-repeat: repeat;
+  	background-color: white;
 }
 
 h1 
@@ -17,11 +17,12 @@ table
 {
 	max-width: 1000px;
 }
-table, th, td 
+th, td 
 {
-    border: 2px inset white;
-    border-collapse: collapse;
 }
+
+tr:nth-child(even) {background-color:rgba(0, 0, 0, 0.1)}
+
 table.noborder, th.noborder, td.noborder 
 {
 	border-width: 0px;

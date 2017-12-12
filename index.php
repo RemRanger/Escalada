@@ -31,7 +31,7 @@ if(isset($_SESSION['IdUser']))
 
 $sql = "
 SELECT Rou.Id IdRoute, Rou.Name RouteName, Rou.Type, Rou.Rating, Rou.Color, Rou.Removed, Att.Result, Att.Percentage, Loc.Name LocName, Rou.Sublocation, 
-		Usr.FirstName, Usr.LastName, UNIX_TIMESTAMP(Ses.Date) SesDate, Ses.Id IdSession, Usr.Id IdUser
+		Usr.FirstName, Usr.LastName, UNIX_TIMESTAMP(Ses.Date) SesDate, Ses.Id IdSession, Usr.Id IdUser, !IsNull(Rou.Picture) HasPicture
 FROM Attempt Att
 JOIN User Usr on Usr.Id = Att.IdUser
 JOIN Route Rou on Rou.Id = Att.IdRoute
@@ -75,7 +75,14 @@ if ($result->num_rows > 0)
 			echo '</a> ';
 			echo '</td>';
 			echo '</tr>';
-			echo '  <tr><th colspan="2">Route</th><th align="left">Type</th><th align="left">Rating</th><th align="left">Location</th><th width="16"><img src="result-finish.png"></th></tr>';
+			echo '  <tr>';
+			echo '    <th colspan="2">Route</th>';
+			echo '    <th align="left">Type</th>';
+			echo '    <th align="left">Rating</th>';
+			echo '    <th align="left">Location</th>';
+			echo '    <th/>';
+			echo '    <th width="16"><img src="result-finish.png"></th>';
+			echo '   </tr>';
 		}
 		
 		echo '<tr><td width="16" bgcolor="' . $row["Color"] . ' "></td>';
@@ -87,12 +94,15 @@ if ($result->num_rows > 0)
 		echo $row["RouteName"] . '</td>';
 		if (isset($_SESSION['IdUser']))
 			echo '</a>';
-		echo '<td>' . $row["Type"] . '</td><td>' . $row["Rating"] 
-			. '</td><td>' . $row["Sublocation"] . '</td>';
+		echo '<td>' . $row["Type"] . '</td><td>' . $row["Rating"] . '</td><td>' . $row["Sublocation"] . '</td>';
+		echo '<td>';
+		if ($row["HasPicture"] == 1)
+			echo '<a href="getRouteImage.php?Id=' . $row[IdRoute] . '"><img src="picture.png"></a>';
+		echo '</td>';
 		if ($row["Result"] == 0 && $row["Percentage"] !== NULL)
 			echo '<td style="color: red">' . $row[Percentage] . '%</td>';
 		else
-		echo '<td align="center"><img src="' . $resultPic . '"></td>';
+			echo '<td align="center"><img src="' . $resultPic . '"></td>';
 		echo '</tr>';
 		
 		$lastSessionId = $row["IdSession"];

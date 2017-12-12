@@ -94,8 +94,9 @@ if ($result->num_rows > 0)
 					$percentageCount[$percentage] = 0;
 				
 				echo '<tr style="background-color:rgba(0, 0, 0, 0.1)">';
+				echo '<tr><td colspan = "100"></tr>';
 				echo '<td colspan="100">';
-				echo 'Rating: ' . $row["Rating"];
+				echo '<b>Rating: ' . $row["Rating"] . '</b>';
 				echo '</td>';
 				echo '</tr>';
 			}
@@ -130,7 +131,7 @@ if ($result->num_rows > 0)
 	
 	$pieChartScript .= WriteStats($statsIndex++, $routeCount, $resultCount, $percentageCount, $lastRating);
 	
-  echo "</table>";
+  	echo "</table>";
 
 	echo '<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>';
 	echo '<script type="text/javascript">' . PHP_EOL;
