@@ -110,7 +110,7 @@ if ($result->num_rows > 0)
 		echo '<td nowrap>' . $row["Type"] . '</td><td nowrap>' . $row["Rating"] . '</td><td nowrap>' . $row["Sublocation"] . '</td>';
 		echo '<td width="16px">';
 		if ($row["PictureFileName"] != null)
-			echo '<a href="RoutePictures/' . $row["PictureFileName"] . '"><img src="picture.png"></a>';
+			echo '<a href="RoutePictures/' . $row["PictureFileName"] . '" target="_blank"><img src="picture.png"></a>';
 		echo '</td>';
 		if ($row["Result"] == 0 && $row["Percentage"] !== NULL)
 			echo '<td style="color: red">' . $row[Percentage] . '%</td>';

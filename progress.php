@@ -114,7 +114,7 @@ if ($result->num_rows > 0)
 			echo '<td>' . $row["Location"] . '</td><td>' . $row["Sublocation"] . '</td>';
 			echo '<td width="16px">';
 			if ($row["PictureFileName"] != null)
-				echo '<a href="RoutePictures/' . $row["PictureFileName"] . '"><img src="picture.png"></a>';
+				echo '<a href="RoutePictures/' . $row["PictureFileName"] . '" target="_blank"><img src="picture.png"></a>';
 			echo '</td>';
 			echo '<td>';
 			if (isset($row["SesDate"]))
