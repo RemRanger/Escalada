@@ -7,7 +7,7 @@ $idRoute = $_GET["idRoute"];
 $includeRemoved = $_GET["includeRemoved"];
 
 $sql = "
-	select Rou.Id, Rou.Color, Rou.Type, Rou.Name, Rou.Rating, Rou.Sublocation 
+	select Rou.Id, Rou.Color, Rou.Type, Rou.Name, Rou.Rating, Rou.Sublocation, Rou.PictureFileName
 	from Route Rou 
 	join Session Ses on Ses.IdLocation = Rou.IdLocation
 	where Ses.Id = $idSession
@@ -35,6 +35,10 @@ while ($row = $result->fetch_assoc())
 	echo '    <td nowrap>' . $row["Type"] . '</td>';
 	echo '    <td nowrap>' . $row["Rating"] . '</td>';
 	echo '    <td nowrap style="text-align: left">' . $row["Sublocation"] . '</td>';
+	echo '    <td width="16px">';
+	if ($row["PictureFileName"] != null)
+		echo '      <a href="RoutePictures/' . $row["PictureFileName"] . '" target="blank"><img src="picture.png"></a>';
+	echo '    </td>';
 	echo '  </tr>';
 }
 

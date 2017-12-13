@@ -36,16 +36,16 @@ Type:
 
 <?php
 $sql = "
-select Rou.Id IdRoute, Rou.Removed, Rou.Rating, Rou.Color, Rou.Name, Loc.Name Location, Rou.Sublocation, Ses.Id IdSession, UNIX_TIMESTAMP(Ses.Date) SesDate, Max(Att.Result) Result, Max(Att.Percentage) Percentage
+select Rou.Id IdRoute, Rou.DateUntil, Rou.Rating, Rou.Color, Rou.Name, Loc.Name Location, Rou.Sublocation, Rou.PictureFileName, Ses.Id IdSession, UNIX_TIMESTAMP(Ses.Date) SesDate, Max(Att.Result) Result, Max(Att.Percentage) Percentage
 from Route Rou
 join Location Loc on Loc.Id = Rou.IdLocation
 left outer join Attempt Att on Att.IdRoute = Rou.Id
 left outer join Session Ses on Ses.Id = Att.IdSession
 where (Att.IdUser = $IdUser or Att.IdUser is null) and Rou.Type = '$Type'";
 if ($History != "True")
-	$sql .= "and Rou.Removed = 0";
+	$sql .= "and Rou.DateUntil is null";
 $sql .= "
-group by Rou.Id, Rou.Removed, Rou.Rating, Rou.Color, Rou.Name, Loc.name, Rou.Sublocation, Ses.Id, Ses.Date
+group by Rou.Id, Rou.DateUntil, Rou.Rating, Rou.Color, Rou.Name, Loc.name, Rou.Sublocation, Ses.Id, Ses.Date
 order by Rou.Rating desc, Max(Att.Result) desc, Max(case Att.Result when 0 then Att.Percentage else 0 end) desc, Ses.Date";
 $result = $conn->query($sql);
 
@@ -54,7 +54,7 @@ $pieChartScript = "";
 if ($result->num_rows > 0) 
 {
 	echo '<table>';
-	echo '  <tr><th><img src="result-finish.png"></th><th colspan="2">Route</th><th align="left">Venue</th><th align="left">Location</th><th align="left">Session</th></tr>';
+	echo '  <tr><th><img src="result-finish.png"></th><th colspan="2">Route</th><th align="left">Venue</th><th align="left">Location</th><th/><th align="left">Session</th></tr>';
 	$hasRoute = [];
 	$lastRating = "";
 	$resultCount = [];
@@ -108,10 +108,14 @@ if ($result->num_rows > 0)
 				echo '<td align="center" style="background-color: $bgColor"><img src="' . $resultPic . '"></td>';
 			echo '<td width="16" bgcolor="' . $row[Color] . ' "></td>';
 			echo '<td><a href="userroutestats.php?IdUser=' . $IdUser . '&IdRoute=' . $idRoute . '">';
-			if ($row["Removed"] == 1)
+			if ($row["DateUntil"] != null)
 				echo '<del>';
 			echo $row["Name"] . '</a></td>';
 			echo '<td>' . $row["Location"] . '</td><td>' . $row["Sublocation"] . '</td>';
+			echo '<td width="16px">';
+			if ($row["PictureFileName"] != null)
+				echo '<a href="RoutePictures/' . $row["PictureFileName"] . '"><img src="picture.png"></a>';
+			echo '</td>';
 			echo '<td>';
 			if (isset($row["SesDate"]))
 				echo '<a href="usersession.php?IdSession=' . $row["IdSession"] . '">' . date("D d-M-Y", $row["SesDate"]) . '</a>';

@@ -16,12 +16,36 @@ if(isset($_POST['btn-editroute']))
 	$Name = mysqli_real_escape_string($conn, $_POST['Name']);
 	$Sublocation = mysqli_real_escape_string($conn, $_POST['Sublocation']);
 	$Rating = mysqli_real_escape_string($conn, $_POST['Rating']);
-	$Removed = mysqli_real_escape_string($conn, $_POST['Removed']);
+	$DateUntil = mysqli_real_escape_string($conn, $_POST['DateUntil']);
+	$DateFrom = mysqli_real_escape_string($conn, $_POST['DateFrom']);
 	$ReturnUrl = mysqli_real_escape_string($conn, $_POST['ReturnUrl']);
 
-	if(!mysqli_query($conn, "UPDATE Route set IdLocation = $IdLocation, Type = '$Type', Color = '$Color', Name = '$Name', Sublocation = '$Sublocation', Rating = '$Rating', Removed = $Removed WHERE Id = $IdRoute"))
+	if ($DateFrom == '')
+		$DateFrom = 'NULL';
+	else 
+		$DateFrom = '\'' . $DateFrom . '\'';
+	if ($DateUntil == '')
+		$DateUntil = 'NULL';
+	else
+		$DateUntil = '\'' . $DateUntil . '\'';
+		
+	if (!mysqli_query($conn, "UPDATE Route set IdLocation = $IdLocation, Type = '$Type', Color = '$Color', Name = '$Name', Sublocation = '$Sublocation', Rating = '$Rating', DateFrom = $DateFrom, DateUntil = $DateUntil WHERE Id = $IdRoute"))
 		die(mysqli_error($conn));
 	
+	$PictureUrl = mysqli_real_escape_string($conn, $_POST['PictureUrl']);
+	if ($PictureUrl != null)
+	{
+		$PictureFileName = basename($PictureUrl);
+		if(mysqli_query($conn, "UPDATE Route set PictureFileName = '$PictureFileName' WHERE Id = $IdRoute"))
+		{
+			$data = file_get_contents($PictureUrl);
+			$fileName = 'RoutePictures/' . $PictureFileName;
+			file_put_contents($fileName, $data);
+		}
+		else
+			die(mysqli_error($conn));
+	}
+		
 	if (isset($ReturnUrl))
 		header("Location: " . $ReturnUrl);
 	else
@@ -29,7 +53,7 @@ if(isset($_POST['btn-editroute']))
 }
 
 $sql = "
-select IdLocation, Type, Color, Name, Sublocation, Rating, Removed, !IsNull(Picture) HasPicture
+select IdLocation, Type, Color, Name, Sublocation, Rating, DateFrom, DateUntil, PictureFileName
 from Route
 where Id = $IdRoute
 ";
@@ -42,8 +66,9 @@ if ($row = $result->fetch_assoc())
 	$Name = $row["Name"];
 	$Sublocation = $row["Sublocation"];
 	$Rating = $row["Rating"];
-	$Removed = $row["Removed"];
-	$HasPicture = $row["HasPicture"];
+	$DateFrom = $row["DateFrom"];
+	$DateUntil = $row["DateUntil"];
+	$PictureFileName = $row["PictureFileName"];
 }
 else
 	die(mysqli_error($conn))
@@ -67,48 +92,52 @@ else
 <tr>
 	<td>
 		<table class="noborder" border="0">
-			<td class="noborder" >Location</td>
-			<td class="noborder" >
-				<select name="IdLocation" required onChange="RefreshLocation(this.value)">
-					<?php
-					if (!isset($IdLocation) || empty($IdLocation))
-						echo '<option disabled selected>--Please select a location--</option>';
-					$sql = "select Id, Name from Location";
-					$result = $conn->query($sql);
-					while ($row = $result->fetch_assoc()) 
-					{
-						echo '<option value="' . $row["Id"]. '"';
-						if ($IdLocation == $row["Id"])
-							echo ' selected';
-						echo '>';
-						echo $row["Name"];
-						echo '</option>';
-					}
-					?>
-				</select>
-			</td>
 			<tr>
-				<td class="noborder">Type</td>
-				<td class="noborder">
-				<div id="RouteTypeContainer"></div>
-			</td></tr>
-			<tr><td class="noborder">Name</td><td class="noborder"><input type="text" name="Name" required placeholder="Name" value="<?php echo $Name ?>" /></td></tr>
-			<tr><td class="noborder">Where</td><td class="noborder"><input type="text" name="Sublocation" required placeholder="Where is it?" value="<?php echo $Sublocation ?>" /></td></tr>
-			<tr><td class="noborder">Rating</td><td class="noborder"><input type="text" name="Rating" required placeholder="Rating" value="<?php echo $Rating ?>" /></td></tr>
-			<tr><td class="noborder">Removed</td><td class="noborder"><input type="hidden" name="Removed" value="0" /><input type="checkbox" name="Removed" placeholder="Removed" value="1" <?php if ($Removed == 1) echo 'checked' ?> /></td></tr>
+				<td class="noborder"  style="text-align: left">Location</td>
+				<td class="noborder"  style="text-align: left">
+					<select name="IdLocation" required onChange="RefreshLocation(this.value)">
+						<?php
+						if (!isset($IdLocation) || empty($IdLocation))
+							echo '<option disabled selected>--Please select a location--</option>';
+						$sql = "select Id, Name from Location";
+						$result = $conn->query($sql);
+						while ($row = $result->fetch_assoc()) 
+						{
+							echo '<option value="' . $row["Id"]. '"';
+							if ($IdLocation == $row["Id"])
+								echo ' selected';
+							echo '>';
+							echo $row["Name"];
+							echo '</option>';
+						}
+						?>
+					</select>
+				</td>
+			</tr>
 			<tr>
-				<td class="noborder">Color</td>
-				<td class="noborder">
+				<td class="noborder" style="text-align: left">Type</td>
+				<td class="noborder" style="text-align: left"><div id="RouteTypeContainer"></div></td>
+			</tr>
+			<tr><td class="noborder" style="text-align: left">Name</td><td class="noborder" style="text-align: left"><input type="text" name="Name" required placeholder="Name" value="<?php echo $Name ?>" /></td></tr>
+			<tr><td class="noborder" style="text-align: left">Where</td><td class="noborder" style="text-align: left"><input type="text" name="Sublocation" required placeholder="Where is it?" value="<?php echo $Sublocation ?>" /></td></tr>
+			<tr><td class="noborder" style="text-align: left">Rating</td><td class="noborder" style="text-align: left"><input type="text" name="Rating" required placeholder="Rating" value="<?php echo $Rating ?>" /></td></tr>
+			<tr><td class="noborder" style="text-align: left">Created</td><td class="noborder" style="text-align: left"><input type="date" name="DateFrom" placeholder="DateFrom" value="<?php echo $DateFrom ?>"/></td></tr>
+			<tr><td class="noborder" style="text-align: left">Removed</td><td class="noborder" style="text-align: left"><input type="date" name="DateUntil" placeholder="DateUntil" value="<?php echo $DateUntil ?>"/></td></tr>
+			<tr>
+				<td class="noborder" style="text-align: left">Color</td>
+				<td class="noborder" style="text-align: left">
 					<?php include_once 'colorSelector.php'; ?>
 				</td>
 			</tr>
+			<tr><td class="noborder" style="text-align: left">Picture</td><td class="noborder"  style="text-align: left"><input type="text" name="PictureUrl" placeholder="Enter Image URL" style="width: 100%"></td>
+			</tr>
 		</table>
 	</td>
-<?php if ($HasPicture == 1)
+<?php if ($PictureFileName != null)
 {
 ?>
 	<td>
-		<img src="getRouteImage.php?Id=<?php echo $IdRoute ?>" />
+		<img src="RoutePictures/<?php echo $PictureFileName ?>" />
 	</td>
 <?php
 }

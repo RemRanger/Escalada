@@ -75,15 +75,14 @@ echo ' onChange="refresh()">History</input>';
 echo '<br><br>';
 
 $sql = "
-select Rou.Id, Rou.Color, Rou.Name, Rou.Type, Rou.Rating, Rou.Sublocation, Rou.Removed, 
+select Rou.Id, Rou.Color, Rou.Name, Rou.Type, Rou.Rating, Rou.Sublocation, Rou.DateFrom, Rou.DateUntil, Rou.PictureFileName, 
 	(select Max(Result) from Attempt where IdUser = $IdUser and IdRoute = Rou.Id) Result,
-	(select Max(Percentage) from Attempt where IdUser = $IdUser and IdRoute = Rou.Id) Percentage,
-	!IsNull(Rou.Picture) HasPicture
+	(select Max(Percentage) from Attempt where IdUser = $IdUser and IdRoute = Rou.Id) Percentage
 from Route Rou 
 where Rou.IdLocation = $IdLocation and (Rou.Type = '$Type' || $result->num_rows < 2)
 ";
 if ($History != "True")
-	$sql .= "and Rou.Removed = 0";
+	$sql .= "and Rou.DateUntil is null";
 
 
 if (isset($Sort))
@@ -108,13 +107,18 @@ if ($result->num_rows > 0)
 {
 	echo '<table>';
 	echo '  <tr>';
-	echo '<th colspan="2"><a href="' . $thisUrl . '&Sort=Name&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '">Route</a></th>';
-	echo '<th><a href="' . $thisUrl . '&Sort=Rating&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '">Rating</a></th>';
-	echo '<th align="left"><a href="' . $thisUrl . '&Sort=Sublocation&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '">Location</a></th>';
+	echo '<th colspan="2"><a href="' . $thisUrl . '&Sort=Name&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '&History=' . $History . '">Route</a></th>';
+	echo '<th><a href="' . $thisUrl . '&Sort=Rating&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '&History=' . $History . '">Rating</a></th>';
+	echo '<th align="left"><a href="' . $thisUrl . '&Sort=Sublocation&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '&History=' . $History . '">Location</a></th>';
+	if ($History == "True")
+	{
+		echo '<th align="left"><a href="' . $thisUrl . '&Sort=DateFrom&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '&History=' . $History . '">Created</a></th>';
+		echo '<th align="left"><a href="' . $thisUrl . '&Sort=DateUntil&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '&History=' . $History . '">Removed</a></th>';
+	}
 	echo '<th/>';
 	if ($CanEditRoutes)
 	{
-			echo '<th><a href="' . $thisUrl . '&Sort=Result&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '"><img src="result-finish.png"></a></th><th></th>';
+			echo '<th><a href="' . $thisUrl . '&Sort=Result&PrevSort=' . $Sort . '&SortDirection=' . $SortDirection . '&History=' . $History . '"><img src="result-finish.png"></a></th><th></th>';
 	}
 	echo '</tr>';
 	while ($row = $result->fetch_assoc()) 
@@ -132,17 +136,21 @@ if ($result->num_rows > 0)
 		echo '<td>';
 		if ($CanEditRoutes)
 			echo '<a href="userroutestats.php?IdUser=' . $IdUser . '&IdRoute=' . $row["Id"] . '">';
-		if ($row["Removed"] == 1)
+		if ($row["DateUntil"] != null)
 			echo '<del>';
 		echo $row["Name"];
 		if ($CanEditRoutes)
 			echo '</a>';
 		echo '</td>';
 		echo '<td>' . $row["Rating"] . '</td><td>' . $row["Sublocation"] . '</td>';
-		echo '</td>';
-		echo '<td>';
-		if ($row["HasPicture"] == 1)
-			echo '<a href="getRouteImage.php?Id=' . $row[Id] . '"><img src="picture.png"></a>';
+		if ($History == "True")
+		{
+			echo '<td>' . $row["DateFrom"] . '</td>';
+			echo '<td>' . $row["DateUntil"] . '</td>';
+		}
+		echo '<td width="16px">';
+		if ($row["PictureFileName"] != null)
+			echo '<a href="RoutePictures/' . $row["PictureFileName"] . '"><img src="picture.png"></a>';
 		echo '</td>';
 		if ($CanEditRoutes)
 		{

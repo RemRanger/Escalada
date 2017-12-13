@@ -20,7 +20,7 @@ $IdUser = $_GET["IdUser"];
 include_once 'dbconnect.php';
 
 $sql = "
-select Name, Color, Rating, Removed, Sublocation from Route where Id = $IdRoute
+select Name, Color, Rating, DateUntil, Sublocation, PictureFileName from Route where Id = $IdRoute
 ";
 $result = $conn->query($sql);
 if ($row = $result->fetch_assoc()) 
@@ -29,7 +29,7 @@ if ($row = $result->fetch_assoc())
 	echo '<table>';
 	echo '<tr><th colspan="2">Route</th><th>Rating</th><th>Location</th></tr>';
 	echo '<tr><td width="16" bgcolor="' . $row[Color] . ' "></td><td>';
-	if ($row["Removed"] == 1)
+	if ($row["DateUntil"] != null)
 		echo '<del>';
 	echo $row["Name"];
 	if (!empty($_SESSION["IdUser"]))
@@ -40,6 +40,8 @@ if ($row = $result->fetch_assoc())
 	echo '</tr>';
 	echo '</table>';
 	echo '<br>';
+	
+	$PictureFileName = $row["PictureFileName"];
 }
 else
 	echo '<table class="noborder">';
@@ -86,15 +88,8 @@ echo '<br>';
 echo '<button style="width:100px" name="btn-back" onclick="window.history.back();">Back</button>';
 echo '<br><br>';
 
-$sql = "
-select Picture from Route where Id = $IdRoute
-";
-$result = $conn->query($sql);
-if ($row = $result->fetch_assoc()) 
-{	
-	if ($row["Picture"] != null)
-	echo '<img src="getRouteImage.php?Id=' . $IdRoute . '"/>';
-}
+if ($PictureFileName != null)
+	echo '<img src="RoutePictures/' . $PictureFileName . '"/>';
 
 $conn->close();
 

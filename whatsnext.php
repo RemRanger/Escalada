@@ -36,11 +36,11 @@ Type:
 $sql = "
 select * from
 (
-  select Rou.Id IdRoute, Rou.Color, Rou.Name, Rou.Rating, Loc.Name LocName, Rou.Sublocation, Max(Att.Result) Result, Max(Att.Percentage) Percentage
+  select Rou.Id IdRoute, Rou.Color, Rou.Name, Rou.Rating, Loc.Name LocName, Rou.Sublocation, Rou.PictureFileName, Rou.DateUntil, Max(Att.Result) Result, Max(Att.Percentage) Percentage
   from Route Rou
   left outer join Attempt Att on Att.IdRoute = Rou.Id
 	inner join Location Loc on Loc.Id = Rou.IdLocation
-  where Rou.Type = '$Type' and Rou.Removed = 0 and (Att.IdUser = $IdUser or Att.IdUser is null)
+  where Rou.Type = '$Type' and Rou.DateUntil is null and (Att.IdUser = $IdUser or Att.IdUser is null)
   group by Rou.Id, Rou.Color, Rou.Name, Rou.Rating, Loc.Name
 ) Atm
 where Result < 2 or Result is null
@@ -51,7 +51,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) 
 {
 	echo '<table>';
-	echo '  <tr><th colspan="2">Route</th><th><img src="result-finish.png"></th><th align="left">Venue</th><th align="left">Location</th>';
+	echo '  <tr><th colspan="2">Route</th><th><img src="result-finish.png"></th><th align="left">Venue</th><th align="left">Location</th><th/>';
 	echo '</tr>';
 	
 	$lastRating = "";
@@ -77,7 +77,7 @@ if ($result->num_rows > 0)
 
 		echo '  <tr><td width="16" bgcolor="' . $row[Color] . ' "></td>';
 		echo '<td><a href="userroutestats.php?IdRoute=' . $row["IdRoute"] . '&IdUser=' . $IdUser . '">';
-		if ($row["Removed"] == 1)
+		if ($row["DateUntil"] != null)
 			echo '<del>';
 		echo $row["Name"] . '</td></a>';
 		if ($row["Result"] == 0 && $row["Percentage"] !== NULL)
@@ -86,6 +86,10 @@ if ($result->num_rows > 0)
 			echo '<td align="center"><img src="' . $resultPic . '"></td>';
 		echo '<td>' . $row["LocName"] . '</td>';
 		echo '<td>' . $row["Sublocation"] . '</td>';
+		echo '</td>';
+		echo '<td width="16px">';
+		if ($row["PictureFileName"] != null)
+			echo '<a href="RoutePictures/' . $row["PictureFileName"] . '"><img src="picture.png"></a>';
 		echo '</td>';
 		echo '</tr>';
 

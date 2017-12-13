@@ -19,19 +19,29 @@ if(isset($_POST['btn-addroute']))
 	$Name = mysqli_real_escape_string($conn, $_POST['Name']);
 	$Sublocation = mysqli_real_escape_string($conn, $_POST['Sublocation']);
 	$Rating = mysqli_real_escape_string($conn, $_POST['Rating']);
-
-	//echo "<script>alert('Type="  . $Type . " IdLocation="  . $IdLocation . " Color="  . $Color . " Name="  . $Name . " Sublocation="  . $Sublocation . " Rating="  . $Rating . "');</script>";
+	$PictureUrl = mysqli_real_escape_string($conn, $_POST['PictureUrl']);
+	if ($PictureUrl != null)
+		$PictureFileName = basename($PictureUrl);
+	else
+		$PictureFileName = null;
+	$Date = date('Y-m-d');
 	
-	if(mysqli_query($conn, "INSERT INTO Route (Type, IdLocation, Color, Name, Sublocation, Rating, Removed) VALUES('$Type', '$IdLocation', '$Color', '$Name', '$Sublocation', '$Rating', '0')"))
+	if(mysqli_query($conn, "INSERT INTO Route (Type, IdLocation, Color, Name, Sublocation, Rating, DateFrom, PictureFileName) 
+							VALUES('$Type', '$IdLocation', '$Color', '$Name', '$Sublocation', '$Rating', '$Date', '$PictureFileName')"))
 	{
+		if ($PictureFileName != null)
+		{
+			$data = file_get_contents($PictureUrl);
+			$fileName = 'RoutePictures/' . $PictureFileName;
+			file_put_contents($fileName, $data);
+		}
+		
 		if (isset($IdLocation) && !empty($IdLocation))
 			header("Location: routes.php?IdLocation=" . $IdLocation);
 		else if (isset($IdAttempt) && !empty($IdAttempt))
 			header("Location: editattempt.php?IdSession=" . $IdSession . "&IdAttempt=" . $IdAttempt);
 		else
 			header("Location: addattempt.php?IdSession=" . $IdSession);
-	?>
-		<?php
 	}
 	else
 	{
@@ -89,6 +99,7 @@ if(isset($_POST['btn-addroute']))
 			<?php include_once 'colorSelector.php'; ?>
 		</td>
 	</tr>
+	<tr><td class="noborder"  style="text-align: left"><input type="text" name="PictureUrl" placeholder="Enter Image URL" style="width: 100%"></td>
 </table>
 <br>
 <button style="width:100px" type="submit" name="btn-addroute">OK</button>&nbsp;&nbsp;
