@@ -1,6 +1,7 @@
 <?php
 
 header("Content-Type:application/json");
+header("Access-Control-Allow-Origin: *");
 session_start();
 include_once 'dbconnect.php';
 
@@ -16,7 +17,7 @@ if ($result->num_rows > 0)
     {
 		if ($rowCount > 0)
 			echo ",";
- 		response($row["Gender"], $row["FirstName"], $row["LastName"]);
+ 		response($row["Id"], $row["Gender"], $row["FirstName"], $row["LastName"]);
  		
  		$rowCount++;
     }
@@ -26,8 +27,9 @@ echo "]";
 
 $conn->close();
 
-function response($gender, $firstName, $lastName)
+function response($id, $gender, $firstName, $lastName)
 {
+	$response['id'] = $id;
 	$response['gender'] = $gender;
 	$response['firstName'] = $firstName;
 	$response['lastName'] = $lastName;
