@@ -9,18 +9,14 @@ include_once 'dbconnect.php';
 	// header("Location: index.php");
 	// //echo 'Logged in already';
 // }
-if(isset($_POST['btn-login']))
-{
-	$username = mysqli_real_escape_string($conn, $_POST['username']);
-	$upass = mysqli_real_escape_string($conn, $_POST['pass']);
 
-	$res=$conn->query("SELECT Id, Password FROM User WHERE UserName='$username'");
-	$row=$res->fetch_assoc();
-	if($row['Password'] == md5($upass))
-		echo '{"id": ' . $row['Id'] . '}';
-	else
-		echo '{"id": -1}';
-}
+$username = mysqli_real_escape_string($conn, $_POST['username']);
+$upass = mysqli_real_escape_string($conn, $_POST['pass']);
+
+$res=$conn->query("SELECT Id, Password FROM User WHERE UserName='$username'");
+$row=$res->fetch_assoc();
+if($row['Password'] == md5($upass))
+	echo '{"id": ' . $row['Id'] . '}';
 else
-	echo '{"id": -1';
+	echo '{"id": -1}';
 ?>
