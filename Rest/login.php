@@ -1,6 +1,7 @@
 <?php
 header("Content-Type:application/json");
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
 session_start();
 include_once 'dbconnect.php';
 
@@ -10,13 +11,21 @@ include_once 'dbconnect.php';
 	// //echo 'Logged in already';
 // }
 
-$username = mysqli_real_escape_string($conn, $_POST['username']);
-$upass = mysqli_real_escape_string($conn, $_POST['pass']);
+$userName = mysqli_real_escape_string($conn, $_POST['userName']);
+$upass = mysqli_real_escape_string($conn, $_POST['password']);
 
-$res=$conn->query("SELECT Id, Password FROM User WHERE UserName='$username'");
+$res=$conn->query("SELECT Id, Password FROM User WHERE UserName='$userName'");
 $row=$res->fetch_assoc();
+
+echo '{';
+echo '"id": ';
 if($row['Password'] == md5($upass))
-	echo '{"id": ' . $row['Id'] . '}';
+	echo $row['Id'];
 else
-	echo '{"id": -1}';
+	echo '-1';
+
+//echo ', ';
+//echo '"userName": "' . $userName . '"';
+
+echo '}';
 ?>
