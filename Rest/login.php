@@ -14,7 +14,7 @@ include_once 'dbconnect.php';
 $userName = mysqli_real_escape_string($conn, $_POST['userName']);
 $upass = mysqli_real_escape_string($conn, $_POST['password']);
 
-$res=$conn->query("SELECT Id, Password FROM User WHERE UserName='$userName'");
+$res=$conn->query("SELECT Id, Password, FirstName FROM User WHERE UserName='$userName'");
 $row=$res->fetch_assoc();
 
 echo '{';
@@ -24,8 +24,8 @@ if($row['Password'] == md5($upass))
 else
 	echo '-1';
 
-//echo ', ';
-//echo '"userName": "' . $userName . '"';
+echo ', ';
+echo '"firstName": "' . $row['FirstName'] . '"';
 
 echo '}';
 ?>
