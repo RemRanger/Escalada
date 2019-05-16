@@ -7,6 +7,8 @@ session_start();
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" type="text/css" href="style.css">
+<title>&Xi;SC&Lambda;L&Lambda;D&Lambda;</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 <center>
