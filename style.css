@@ -1,10 +1,12 @@
 body 
 {
+	margin: 0;
+	padding-top: 35px;
   	font: 15px arial, sans-serif;
 	background-image: url("background.jpg");
 	background-size: 100%;
 	background-repeat: repeat;
-  	background-color: white;
+	background-attachment: fixed;
 }
 
 h1 
@@ -35,27 +37,27 @@ th, td
 
 ul.topnav 
 {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: black;
-	opacity: .4;
-    /*position: fixed;
-    top: 0;
-    width: 100%;*/
-}
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: lightgrey;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  top: 0;
+  text-align: center;
+  vertical-align: middle;}
 
 ul.topnav li 
 {
     float: center;
 	display: inline-block;
-    color: white;
+    color: black;
 }
 ul.topnav li a 
 {
     display: block;
-    color: white;
+    color: black;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -70,7 +72,7 @@ ul.topnav li a:hover:not(.active)
 ul.topnav li a.active 
 {
     color: black;
-    background-color: white;
+    background-color: whitesmoke;
 	opacity: .6;
 }
 
@@ -82,8 +84,8 @@ ul.subnav
 li a, .dropbtn 
 {
     display: inline-block;
-    color: white;
-	background-color: black;
+    color: black;
+	background-color: lightgrey;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -91,7 +93,7 @@ li a, .dropbtn
 
 div a:hover, .dropdown-content:hover 
 {
-	color: red;
+	color: cornflowerblue;
 }
 
 li.dropdown 
@@ -164,13 +166,13 @@ input[type="button"]
 
 a
 {
-	color: maroon;
+	color: royalblue;
 	text-decoration: none;
 }
 
 a:hover
 {
-	color: red;
+	color: cornflowerblue;
 }
 
 #login-form td

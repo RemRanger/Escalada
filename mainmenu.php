@@ -15,13 +15,14 @@ if(isset($_SESSION['IdUser']))
 $pageUrl = basename($_SERVER['PHP_SELF']);
 $pages = 
 [
-	"index.php" => "&Xi;SC&Lambda;L&Lambda;D&Lambda;",
+	"index.php" => "Home",
 	"locations.php" => "Locations",
 	"climbers.php" => "Climbers",
 	"about.php" => "About"
 ];
 
 echo '<ul class="topnav">';
+echo '<li><img src="favicon.ico" style="vertical-align:middle" width="32px"/><span style="color:darkslateblue; font-weight:800">&nbsp;&nbsp;&Xi;SC&Lambda;L&Lambda;D&Lambda;&nbsp;</span></li>';
 foreach ($pages as $page => $pageName)
 {
 	echo '	<li><a href="' . $page . '"';
@@ -32,15 +33,11 @@ foreach ($pages as $page => $pageName)
 
 if (!empty($_SESSION["IdUser"])) 
 {
-	echo '<li class="dropdown">';
-	echo '  <a href="#" class="dropbtn"">' . $row["FirstName"] . '</a>';
-	echo '    <div class="dropdown-content">';
-	echo '    	<a href="sessions.php">My sessions</a>';
-	echo '    	<a href="progress.php">Progress</a>';
-	echo '    	<a href="whatsnext.php">What\'s next</a>';
-	echo '    	<a href="logout.php?logout">Logout</a>';
-	echo '    </div>';
-	echo '</li>';
+	echo '<li style="color:darkslateblue">Welcome ' . $row["FirstName"] . '</li>';
+	echo '<li><a href="sessions.php">My sessions</a></li>';
+	echo '<li><a href="progress.php">Progress</a></li>';
+	echo '<li><a href="whatsnext.php">What\'s next</a></li>';
+	echo '<li><a href="logout.php?logout">Logout</a></li>';
 }
 else
 	echo '<li><a href="login.php">Login</a></li>';
