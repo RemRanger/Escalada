@@ -33,7 +33,7 @@ foreach ($pages as $page => $pageName)
 
 if (!empty($_SESSION["IdUser"])) 
 {
-	echo '<li style="color:darkslateblue">Welcome ' . $row["FirstName"] . '</li>';
+	echo '<li style="color:darkslateblue">&nbsp;&nbsp;Welcome ' . $row["FirstName"] . '&nbsp;&nbsp;</li>';
 	echo '<li><a href="sessions.php">My sessions</a></li>';
 	echo '<li><a href="progress.php">Progress</a></li>';
 	echo '<li><a href="whatsnext.php">What\'s next</a></li>';

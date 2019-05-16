@@ -11,14 +11,22 @@ include_once 'dbconnect.php';
 </head>
 <body>
 
-<center>
-
-<?php include_once 'mainmenu.php';?>
-
-<h1>&Xi;SC&Lambda;L&Lambda;D&Lambda;</h1>
-<i>Climber's log</I><br><br>
-&copy; 2017 R&Xi;M&Lambda;GINE Software<br><br>
-
+<div align="center" class="card">
+  <?php include_once 'mainmenu.php';?>
+  <div class="card-body">
+    <div class="container-fluid">
+      <div class="text-center"><h1 style="color:darkslateblue">&Xi;SC&Lambda;L&Lambda;D&Lambda;&nbsp;&nbsp;&nbsp;</h1></div>
+      <div class="text-center" style="font-style:italic">A climber's log</div>
+      <div class="text-center"><br />Developed on PHP</div>
+      <div class="text-center">
+        <img src="http://icons.iconarchive.com/icons/papirus-team/papirus-apps/128/github-bartzaalberg-php-tester-icon.png" class="img-responsive center-block" style="max-height:100px;padding-top:10px;padding-bottom:10px" />
+        <div class="text-center">by</div>
+        <div class="text-center"><h3>RΞM</h3></div>
+        <div class="text-center"><a href="http://www.remranger.com">www.remranger.com</a></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html> 
